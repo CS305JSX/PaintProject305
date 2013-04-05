@@ -53,14 +53,14 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 			this.data[i] = data[i];
 		}
 		
-		repaint();
+		graphics.drawLine(data[0], data[1], data[2], data[3]);
 	}
 	
 	public void paintComponent(Graphics g){
 		//System.out.println("paint: " + Long.toHexString(lineStartX) + " " + Long.toHexString(lineStartY) + " " + Long.toHexString(lineEndX) + " " + Long.toHexString(lineEndY));
-		if(id == 1){
-			graphics.drawLine(data[0], data[1], data[2], data[3]);
-		}
+		//if(id == 1){
+		//	graphics.drawLine(data[0], data[1], data[2], data[3]);
+		//}
 		
 		g.drawImage(image, 0, 0, null);
 	}
