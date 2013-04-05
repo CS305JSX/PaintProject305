@@ -11,14 +11,13 @@ public class PaintFrame extends JFrame {
 	DataInputStream in;
 	
 	public PaintFrame(){
+		setVisible(true);
 		setSize(500, 500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
-		setVisible(true);
-		
 		try{
-			clientSocket = new Socket("71.161.247.27", 12356);  
+			clientSocket = new Socket("localhost", 12356);  
 	        out = new DataOutputStream(clientSocket.getOutputStream());
 	        in = new DataInputStream(clientSocket.getInputStream());
 		}
