@@ -52,6 +52,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		for(int i=0; i < data.length; i++){
 			this.data[i] = data[i];
 		}
+		
+		repaint();
 	}
 	
 	public void paintComponent(Graphics g){
