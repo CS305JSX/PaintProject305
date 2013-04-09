@@ -16,9 +16,6 @@ public class PaintFrame extends JFrame {
 	
 	public PaintFrame(String host, int port){
 		
-		setVisible(true);
-		setSize(500, 500);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
 		try{
@@ -30,8 +27,14 @@ public class PaintFrame extends JFrame {
 			System.out.println("IOException setting up applet in frame...");
 		}
 		
-		getContentPane().add(new SidePanel(in, out));
-		getContentPane().add(new PaintApplet(in, out));
+		SidePanel panel = new SidePanel(in, out);
+		getContentPane().add(panel);
+		PaintApplet app = new PaintApplet(in, out);
+		app.setSidePanel(panel);
+		getContentPane().add(app);
+		setVisible(true);
+		setSize(500, 500);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	

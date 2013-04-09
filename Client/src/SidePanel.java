@@ -13,7 +13,11 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class SidePanel extends JPanel implements ActionListener {
 	
+	enum Operation {Pencil, Bucket}; 
+	Operation op;
+	
 	JButton pencilButton;
+	JButton bucketButton;
 	JButton logoutButton;
 	
 	DataInputStream in;
@@ -21,20 +25,24 @@ public class SidePanel extends JPanel implements ActionListener {
 	
 	public SidePanel(DataInputStream in, DataOutputStream out){
 		setOpaque(false);
-		pencilButton = new JButton("P");
-		logoutButton = new JButton("X");
 		
-		pencilButton.addActionListener(this);
-		logoutButton.addActionListener(this);
-		
+		pencilButton = addNewButton("Paint");
+		logoutButton = addNewButton("Logout");
+		bucketButton = addNewButton("Bucket");		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		add(pencilButton);
 		add(Box.createRigidArea(new Dimension(10, 10)));
-		add(logoutButton);
 		
 		this.in = in;
 		this.out = out;
+	}
+	
+	private JButton addNewButton(String name)
+	{
+		JButton btn = new JButton(name);
+		btn.addActionListener(this);
+		this.add(btn);
+		return btn;
 	}
 	
 	public void actionPerformed(ActionEvent e){
@@ -43,11 +51,16 @@ public class SidePanel extends JPanel implements ActionListener {
 			bytes[0] = 0;
 			try{
 				out.write(bytes);
+				System.exit(0);
 			}
 			catch(IOException ioe){
 				System.out.println("IOException from logout button");
 			}
 		}
+		else if(e.getSource() == pencilButton)
+			op = Operation.Pencil;
+		else if(e.getSource() == bucketButton)
+			op = Operation.Bucket;
 	}
 	
 }

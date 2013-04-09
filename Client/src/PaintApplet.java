@@ -29,6 +29,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	DataOutputStream out;
 	DataInputStream in;
 	
+	SidePanel panel;
+	
 	public PaintApplet(DataInputStream in, DataOutputStream out) {
 		setOpaque(false);
 		System.out.println("paint");
@@ -50,6 +52,11 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		
 		this.in = in;
 		this.out = out;
+	}
+	
+	public void setSidePanel(SidePanel panel)
+	{
+		this.panel = panel;
 	}
 	
 	public synchronized void giveCommand(byte id, int[] data){
@@ -81,6 +88,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	}
 	
 	public void mouseDragged(MouseEvent m) {
+		if(panel.op != SidePanel.Operation.Pencil)return;
+		
 		int curMouseX = m.getX();
 		int curMouseY = m.getY();
 		
