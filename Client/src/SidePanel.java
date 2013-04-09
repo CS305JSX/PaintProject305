@@ -8,14 +8,16 @@ import java.io.IOException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class SidePanel extends JPanel implements ActionListener {
 	
 	enum Operation {Pencil, Bucket}; 
-	Operation op;
+	Operation op = Operation.Pencil;
 	
+	JLabel currentToolLabel;
 	JButton pencilButton;
 	JButton bucketButton;
 	JButton logoutButton;
@@ -26,9 +28,14 @@ public class SidePanel extends JPanel implements ActionListener {
 	public SidePanel(DataInputStream in, DataOutputStream out){
 		setOpaque(false);
 		
+		currentToolLabel = new JLabel();
+		onOperationChanged();
+		this.add(currentToolLabel);
+		
 		pencilButton = addNewButton("Paint");
+		bucketButton = addNewButton("Bucket");
 		logoutButton = addNewButton("Logout");
-		bucketButton = addNewButton("Bucket");		
+		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		add(Box.createRigidArea(new Dimension(10, 10)));
@@ -58,9 +65,21 @@ public class SidePanel extends JPanel implements ActionListener {
 			}
 		}
 		else if(e.getSource() == pencilButton)
+		{
 			op = Operation.Pencil;
+			onOperationChanged();
+		}
 		else if(e.getSource() == bucketButton)
+		{
 			op = Operation.Bucket;
+			onOperationChanged();
+		}
+	}
+	
+	private void onOperationChanged()
+	{
+		if(op == Operation.Pencil)currentToolLabel.setText("Pencil");
+		else if(op == Operation.Bucket)currentToolLabel.setText("Bucket");
 	}
 	
 }
