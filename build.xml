@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="PaintProj" default="compile">
+  <description>PaintProj</description>
+  
+  <target name = "run-client" depends = "compile">
+	<java jar="jar/client.jar" fork='true'>
+		<arg line="localhost 12356" />
+	</java>
+  </target>
+  
+  <target name="compile">
+    <javac srcdir  = "src" 
+		   destdir = "bin" 
+		   includeantruntime="false"
+	/>
+	<jar destfile = "jar/client.jar">
+		<fileset dir = "bin"/>
+		<fileset dir = "resource"/>
+		 <manifest>
+			<attribute name="Main-Class"
+				value="PaintFrame"/>
+		 </manifest>
+	</jar>
+	<jar destfile = "jar/server.jar" 
+		 basedir  = "bin">
+		 <manifest>
+			<attribute name="Main-Class"
+				value="PaintServer"/>
+		 </manifest>
+	</jar>
+  </target>
+  
+</project>

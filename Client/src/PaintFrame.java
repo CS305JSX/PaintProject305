@@ -5,6 +5,8 @@ import java.net.Socket;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 @SuppressWarnings("serial")
 public class PaintFrame extends JFrame {
@@ -44,7 +46,22 @@ public class PaintFrame extends JFrame {
 		String host = args[0];
 		int port = Integer.parseInt(args[1]); 
 		
+		enableNimbus();
 		new PaintFrame(host, port);
+	}
+	
+	private static void enableNimbus()
+	{
+		try {
+		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
+		} catch (Exception e) {
+			//nimbus not installed
+		}
 	}
 	
 	private static void printUsageAndQuit()

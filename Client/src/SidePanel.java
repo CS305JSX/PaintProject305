@@ -3,10 +3,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,33 +20,53 @@ public class SidePanel extends JPanel implements ActionListener {
 	enum Operation {Pencil, Bucket}; 
 	Operation op = Operation.Pencil;
 	
+	
 	JLabel currentToolLabel;
 	JButton pencilButton;
 	JButton bucketButton;
-	JButton logoutButton;
+	JButton logoutButton; 
 	
-	DataInputStream in;
+	DataInputStream in; 
 	DataOutputStream out;
 	
+	ImageIcon pencilIcon;
+	ImageIcon bucketIcon;
+	
 	public SidePanel(DataInputStream in, DataOutputStream out){
-		setOpaque(false);
-		
+		setOpaque(false); 
+
+		loadTextures();
 		currentToolLabel = new JLabel();
 		onOperationChanged();
 		this.add(currentToolLabel);
 		
 		pencilButton = addNewButton("Paint");
 		bucketButton = addNewButton("Bucket");
-		logoutButton = addNewButton("Logout");
-		
+		logoutButton = addNewButton("Logout"); 
+		 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		
+		 
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		
 		this.in = in;
 		this.out = out;
 	}
+	 
+	private File getResource(String name)
+	{
+		return new File(this.getClass().getClassLoader().getResource(name).getFile());
+	} 
 	
+	private void loadTextures()
+	{ 
+		 try { 
+			pencilIcon = new ImageIcon(ImageIO.read(getResource("img/pencil.png"))); 
+			bucketIcon = new ImageIcon(ImageIO.read(getResource("img/bucket.png")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	 
 	private JButton addNewButton(String name)
 	{
 		JButton btn = new JButton(name);
@@ -78,8 +101,8 @@ public class SidePanel extends JPanel implements ActionListener {
 	
 	private void onOperationChanged()
 	{
-		if(op == Operation.Pencil)currentToolLabel.setText("Pencil");
-		else if(op == Operation.Bucket)currentToolLabel.setText("Bucket");
+		if(op == Operation.Pencil)currentToolLabel.setIcon(pencilIcon);
+		else if(op == Operation.Bucket)currentToolLabel.setIcon(bucketIcon);
 	}
 	
 }
