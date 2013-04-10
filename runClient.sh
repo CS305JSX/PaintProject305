@@ -1,3 +1,3 @@
-javac Client/src/*.* -d Client/bin
+javac src/*.* -d bin
 
-java -cp Client/bin PaintFrame localhost 12356
+java -cp bin PaintFrame localhost 12356

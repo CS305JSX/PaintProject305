@@ -1,3 +1,3 @@
-javac Client/src/*.* -d Client/bin
+javac src/*.* -d bin
 
-java -cp Client/bin PaintServer 12356
+java -cp bin PaintServer 12356
