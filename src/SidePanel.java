@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,10 +10,16 @@ public class SidePanel extends JPanel implements ActionListener {
 	JButton pencilButton;
 	JButton logoutButton;
 	
-	DataInputStream in;
-	DataOutputStream out;
+	ObjectInputStream in;
+	ObjectOutputStream out;
 	
-	public SidePanel(DataInputStream in, DataOutputStream out){
+	PaintFrame frame;
+	
+	public SidePanel(ObjectInputStream in, ObjectOutputStream out, PaintFrame frame){
+		this.in = in;
+		this.out = out;
+		this.frame = frame;
+		
 		setOpaque(false);
 		pencilButton = new JButton("P");
 		logoutButton = new JButton("X");
@@ -25,9 +32,6 @@ public class SidePanel extends JPanel implements ActionListener {
 		add(pencilButton);
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		add(logoutButton);
-		
-		this.in = in;
-		this.out = out;
 	}
 	
 	public void actionPerformed(ActionEvent e){
@@ -35,7 +39,8 @@ public class SidePanel extends JPanel implements ActionListener {
 			byte[] bytes = new byte[32];
 			bytes[0] = 0;
 			try{
-				out.write(bytes);
+				out.writeObject(Constants.EXIT_TO_LOBBY);
+				frame.displayStartScreen();
 			}
 			catch(IOException ioe){
 				System.out.println("IOException from logout button");
