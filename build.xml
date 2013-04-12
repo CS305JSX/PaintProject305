@@ -9,6 +9,12 @@
 	</java>
   </target>
   
+  <target name = "run-server" depends = "compile">
+	<java jar="jar/server.jar" fork='true'>
+		<arg line="12356" />
+	</java>
+  </target>
+
   <target name="compile">
     <javac srcdir  = "src" 
 		   destdir = "bin" 
