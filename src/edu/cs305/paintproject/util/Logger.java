@@ -7,7 +7,7 @@ public class Logger {
 	public static final boolean PRINT_MSGS = true;
 	public static final boolean PRINT_STACK = true;
 
-	private static SimpleDateFormat date_format = new SimpleDateFormat("[yyyy:MMM:dd HH:mm:ss] ");
+	private static SimpleDateFormat date_format = new SimpleDateFormat("[MMM.dd HH:mm:ss] ");
 
 	private static void putLine(String line)
 	{
@@ -39,13 +39,13 @@ public class Logger {
 	
 	public static void log(Exception e)
 	{
-		if(PRINT_MSGS)log(e.getMessage());
+		if(PRINT_MSGS)log(e.toString());
 		if(PRINT_STACK)e.printStackTrace(System.err);
 	}
 	
 	public static void log(Exception e, String msg)
 	{
-		if(PRINT_MSGS)log(e.getMessage() + " " + msg);
+		if(PRINT_MSGS)log(e + " " + msg);
 		if(PRINT_STACK)e.printStackTrace(System.err);
 	}
 }
