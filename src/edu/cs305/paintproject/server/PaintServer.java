@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.util.Logger;
 
 
@@ -70,11 +71,21 @@ class PaintServer {
 			session = new ArrayList<WorkerThread>();
 			sessions.put(pictureName, session);
 			
+			addThreadToSession(thread, session);
+			
 			BufferedImage image = null;
 			try{
 				File imgFile = new File("Server/Pictures/" + pictureName);
 				if(!imgFile.exists())
+				{
 						ImageIO.write(new BufferedImage(400,400, BufferedImage.TYPE_3BYTE_BGR), "png", imgFile);
+						
+						for(String assesion : sessions.keySet())
+						{
+							for(WorkerThread worker : sessions.get(assesion))
+								worker.send(Constants.REFRESH_PICTURE_NAMES, assesion);
+						}
+				}
 				
 				image = ImageIO.read(imgFile);
 			}
@@ -83,8 +94,6 @@ class PaintServer {
 			}
 			images.put(pictureName, image);
 		}
-		
-		addThreadToSession(thread, session);
 		
 		return images.get(pictureName);
 	}

@@ -34,6 +34,7 @@ public class ClientListenerThread extends Thread {
 				}
 				else if(data instanceof Integer){
 					if((Integer)data == Constants.REFRESH_PICTURE_NAMES){
+						Logger.log("got refresh reminder");
 						try{
 							frame.out.writeObject(Constants.REQUEST_PICTURE_NAMES);
 							frame.out.flush();

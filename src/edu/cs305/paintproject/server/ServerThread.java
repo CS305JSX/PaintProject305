@@ -53,11 +53,7 @@ public class ServerThread extends Thread {
 				if(bytes[0] == 0)
 					close = true;
 				
-				Logger.log("Rec: ");
-				for(int i=0; i<bytes.length; i++){
-					Logger.log(bytes[i] + " ");
-				}
-				Logger.log();
+				Logger.log("Rec: " + bytes);
 				
 				if(!close){
 					for(int i=0; i<clients.size(); i++){
