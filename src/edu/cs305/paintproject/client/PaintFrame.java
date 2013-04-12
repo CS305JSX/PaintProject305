@@ -118,6 +118,7 @@ public class PaintFrame extends JFrame {
 		int port = Integer.parseInt(args[1]); 
 		
 		enableNimbus();
+		Logger.startLogging("client.log");
 		new PaintFrame(host, port);
 	}
 	private static void printUsageAndQuit()

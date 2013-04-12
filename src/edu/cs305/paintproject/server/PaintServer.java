@@ -28,6 +28,7 @@ class PaintServer {
 		if(argv.length != 1)printUsageAndQuit();
 	  	int port = Integer.parseInt(argv[0]);
 
+	  	Logger.startLogging("server.log");
 		new PaintServer().runServer(port);
 	}
 	
