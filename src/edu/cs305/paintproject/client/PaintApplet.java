@@ -82,7 +82,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		int curMouseY = m.getY();
 		
 		 if(prevMouseX != -1 && prevMouseY != -1){
-			 graphics.drawLine(prevMouseX, prevMouseY, curMouseX, curMouseY);
+			 LineSegment line = new LineSegment(prevMouseX, prevMouseY, curMouseX, curMouseY);
+			 DrawCommands.drawLineSegmentWithWidth(line, graphics, 10);
 			 try{
 				 /*byte[] bytes = new byte[32];
 				 
@@ -100,7 +101,7 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 					System.out.println();
 				 
 				 out.write(bytes);*/
-				 LineSegment line = new LineSegment(prevMouseX, prevMouseY, curMouseX, curMouseY);
+				 
 				 out.writeObject(line);
 				 out.flush();
 				 out.reset();
