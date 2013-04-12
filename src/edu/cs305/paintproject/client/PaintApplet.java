@@ -1,3 +1,4 @@
+package edu.cs305.paintproject.client;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -10,6 +11,10 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import edu.cs305.paintproject.DrawCommands;
+import edu.cs305.paintproject.LineSegment;
+import edu.cs305.paintproject.util.Logger;
 
 @SuppressWarnings("serial")
 public class PaintApplet extends JPanel implements MouseListener, MouseMotionListener {
@@ -25,7 +30,7 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	SidePanel panel;
 	public PaintApplet(ObjectInputStream in, ObjectOutputStream out) {
 		setOpaque(false);
-		System.out.println("paint");
+		Logger.log("paint");
 		addMouseListener(this);
 		addMouseMotionListener(this);
         
@@ -88,7 +93,7 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 				 addInt(bytes, curMouseX, 9);
 				 addInt(bytes, curMouseY, 13);
 				 
-				 System.out.print("Send: ");
+				 Logger.log("Send: ");
 				 for(int i=0; i<17; i++){
 						System.out.print(Long.toHexString(bytes[i] & 0xFF) + " ");
 					}
@@ -101,7 +106,7 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 				 out.reset();
 			 }
 			 catch(IOException ioe){
-				 System.out.println("IOException");
+				 Logger.log(ioe);
 			 }
 		 }
 		

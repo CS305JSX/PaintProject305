@@ -1,3 +1,4 @@
+package edu.cs305.paintproject.client;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+
+import edu.cs305.paintproject.Constants;
+import edu.cs305.paintproject.util.Logger;
 
 @SuppressWarnings("serial")
 public class PaintFrame extends JFrame {
@@ -34,7 +38,7 @@ public class PaintFrame extends JFrame {
 	        in = new ObjectInputStream(clientSocket.getInputStream());
 		}		
 		catch(IOException ioe){
-			System.out.println("IOException setting up object streams...");
+			Logger.log(ioe, "setting up object streams...");
 		}
 		
 		clt = new ClientListenerThread(in, this);
@@ -42,7 +46,7 @@ public class PaintFrame extends JFrame {
 		
 		addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
-				System.out.println("close");
+				Logger.log("close");
 				clt.interrupt();
 				try{
 					out.writeObject(Constants.LOGOUT);
@@ -50,7 +54,7 @@ public class PaintFrame extends JFrame {
 					System.exit(0);
 				}
 				catch(IOException ioe){
-					System.out.println("IOException while logging out...");
+					Logger.log(ioe, "while logging out...");
 				}
 				
 			}

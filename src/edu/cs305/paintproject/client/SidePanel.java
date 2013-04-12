@@ -1,3 +1,4 @@
+package edu.cs305.paintproject.client;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import edu.cs305.paintproject.Constants;
+import edu.cs305.paintproject.util.Logger;
 
 @SuppressWarnings("serial")
 public class SidePanel extends JPanel implements ActionListener {
@@ -62,7 +66,7 @@ public class SidePanel extends JPanel implements ActionListener {
 			pencilIcon = new ImageIcon(ImageIO.read(getResource("img/pencil.png"))); 
 			bucketIcon = new ImageIcon(ImageIO.read(getResource("img/bucket.png")));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.log(e, "while loading textures");
 		}
 	}
 	 
@@ -83,7 +87,7 @@ public class SidePanel extends JPanel implements ActionListener {
 				frame.displayStartScreen();
 			}
 			catch(IOException ioe){
-				System.out.println("IOException from logout button");
+				Logger.log(ioe, "from logout button");
 			}
 		}
 		else if(e.getSource() == pencilButton)

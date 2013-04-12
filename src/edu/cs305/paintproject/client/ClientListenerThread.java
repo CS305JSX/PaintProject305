@@ -1,9 +1,13 @@
+package edu.cs305.paintproject.client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
+
+import edu.cs305.paintproject.util.Logger;
+
 public class ClientListenerThread extends Thread {
 	
 	ObjectInputStream in;
@@ -31,11 +35,11 @@ public class ClientListenerThread extends Thread {
 					frame.applet.giveCommand(data);
 			}
 		}
-		catch(IOException ioe){
-			System.out.println("IOException in ClientListenerThread...");
+		catch(IOException e){
+			Logger.log(e);
 		}
-		catch(ClassNotFoundException cnfe){
-			System.out.println("ClassNotFoundException in ClientListenerThread...");
+		catch(ClassNotFoundException e){
+			Logger.log(e);
 		}
 	}
 	

@@ -1,3 +1,4 @@
+package edu.cs305.paintproject.server;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+
+import edu.cs305.paintproject.util.Logger;
+
 
 class PaintServer {
 	
@@ -28,7 +32,7 @@ class PaintServer {
 	}
 	
 	public void runServer(int port) throws Exception {
-		System.out.println("Starting Server....");
+		Logger.log("Starting Server....");
 		
 		ArrayList<WorkerThread> lobby = new ArrayList<WorkerThread>();
 		sessions.put("lobby", lobby);
@@ -45,7 +49,7 @@ class PaintServer {
 			
 			addThreadToSession(thread, lobby);
 			
-			System.out.println("Creating Thread");
+			Logger.log("Creating Thread");
 			thread.start();
 		} 	 
 	}
@@ -68,7 +72,7 @@ class PaintServer {
 				image = ImageIO.read(new File("Server/Pictures/" + pictureName));
 			}
 			catch(IOException ioe){
-				System.out.println("IOException while getting image in exit lobby...");
+				Logger.log(ioe,"while getting image in exit lobby...");
 			}
 			images.put(pictureName, image);
 		}
@@ -84,10 +88,10 @@ class PaintServer {
 			sessions.remove(pictureName);
 			try{
 				ImageIO.write(image, "png", new File("Server/Pictures/" + pictureName));
-				System.out.println("Saved image");
+				Logger.log("Saved image");
 			}
 			catch(IOException ioe){
-				System.out.println("IOException while saving image...");
+				Logger.log(ioe,"while saving image...");
 			}
 		}
 		thread.sessionMembers.clear();

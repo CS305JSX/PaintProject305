@@ -19,14 +19,14 @@
 		<fileset dir = "resource"/>
 		 <manifest>
 			<attribute name="Main-Class"
-				value="PaintFrame"/>
+				value="edu.cs305.paintproject.client.PaintFrame"/>
 		 </manifest>
 	</jar>
 	<jar destfile = "jar/server.jar" 
 		 basedir  = "bin">
 		 <manifest>
 			<attribute name="Main-Class"
-				value="PaintServer"/>
+				value="edu.cs305.paintproject.server.PaintServer"/>
 		 </manifest>
 	</jar>
   </target>

@@ -1,3 +1,4 @@
+package edu.cs305.paintproject;
 
 public class test {
 	

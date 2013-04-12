@@ -1,5 +1,8 @@
+package edu.cs305.paintproject.server;
 import java.io.*;
 import java.util.*;
+
+import edu.cs305.paintproject.util.Logger;
 
 public class ServerThread extends Thread {
 	
@@ -23,7 +26,7 @@ public class ServerThread extends Thread {
 				available = false;
 			}
 			catch(IOException ioe){
-				System.out.println("IOException while closing output stream...");
+				Logger.log(ioe,"while closing output stream...");
 			}
 		}
 		
@@ -34,7 +37,7 @@ public class ServerThread extends Thread {
 			outToClient.write(bytes);
 		}
 		catch(IOException ioe){
-			System.out.println("IOException while sending to client...");
+			Logger.log(ioe,"while sending to client...");
 		}
 		
 		return true;
@@ -50,11 +53,11 @@ public class ServerThread extends Thread {
 				if(bytes[0] == 0)
 					close = true;
 				
-				System.out.print("Rec: ");
+				Logger.log("Rec: ");
 				for(int i=0; i<bytes.length; i++){
-					System.out.print(bytes[i] + " ");
+					Logger.log(bytes[i] + " ");
 				}
-				System.out.println();
+				Logger.log();
 				
 				if(!close){
 					for(int i=0; i<clients.size(); i++){
@@ -62,7 +65,7 @@ public class ServerThread extends Thread {
 						
 						if(!thread.send(false, bytes))
 							clients.set(i, null);
-						System.out.println("written");
+						Logger.log("written");
 					}
 					
 					while(clients.remove(null)){}
@@ -74,8 +77,8 @@ public class ServerThread extends Thread {
 			}
 		}
 		catch(IOException ioe){
-			System.out.println("IOException in thread...");
+			Logger.log(ioe);
 		}
-		System.out.println("Exiting Thread...");
+		Logger.log("Exiting Thread...");
 	}
 }
