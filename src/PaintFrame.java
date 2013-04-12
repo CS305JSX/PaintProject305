@@ -1,9 +1,12 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -12,44 +15,80 @@ import javax.swing.UIManager.LookAndFeelInfo;
 public class PaintFrame extends JFrame {
 	
 	Socket clientSocket;
-	DataOutputStream out;
-	DataInputStream in;
+	ObjectOutputStream out;
+	ObjectInputStream in;
 	
+	StartPanel start;
+	PaintApplet applet;
+	SidePanel side;
+	
+	ClientListenerThread clt;
 	
 	public PaintFrame(String host, int port){
-		
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
 		try{
 			clientSocket = new Socket(host, port);  
-	        out = new DataOutputStream(clientSocket.getOutputStream());
-	        in = new DataInputStream(clientSocket.getInputStream());
-		}
+	        out = new ObjectOutputStream(clientSocket.getOutputStream());
+	        out.flush();
+	        in = new ObjectInputStream(clientSocket.getInputStream());
+		}		
 		catch(IOException ioe){
-			System.out.println("IOException setting up applet in frame...");
+			System.out.println("IOException setting up object streams...");
 		}
 		
-		SidePanel panel = new SidePanel(in, out);
-		getContentPane().add(panel);
-		PaintApplet app = new PaintApplet(in, out);
-		app.setSidePanel(panel);
-		getContentPane().add(app);
+		clt = new ClientListenerThread(in, this);
+		clt.start();
+		
+		addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				System.out.println("close");
+				clt.interrupt();
+				try{
+					out.writeObject(Constants.LOGOUT);
+					out.flush();
+					System.exit(0);
+				}
+				catch(IOException ioe){
+					System.out.println("IOException while logging out...");
+				}
+				
+			}
+		});
+		
+		side = new SidePanel(in, out, this);
+		applet = new PaintApplet(in, out);
+		start = new StartPanel(in, out, this);
+		applet.setSidePanel(side);
+		
+		getContentPane().add(start);
+		getContentPane().add(side);
+		getContentPane().add(applet);
+		
 		setVisible(true);
 		setSize(500, 500);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	
-	public static void main(String[] args){
-		if(args.length != 2)printUsageAndQuit();
-		
-		String host = args[0];
-		int port = Integer.parseInt(args[1]); 
-		
-		enableNimbus();
-		new PaintFrame(host, port);
+	public void displayApplet(ImageIcon i){
+		applet.displayImage(i);
+		//getContentPane().remove(start);
+		//getContentPane().add(side);
+		//getContentPane().add(applet);
+		start.setVisible(false);
+		side.setVisible(true);
+		applet.setVisible(true);
+		validate();
 	}
 	
+	public void displayStartScreen(){
+		//getContentPane().add(start);
+		//getContentPane().remove(side);
+		//getContentPane().remove(applet);
+		start.setVisible(true);
+		side.setVisible(false);
+		applet.setVisible(false);
+		validate();
+	}
 	private static void enableNimbus()
 	{
 		try {
@@ -64,6 +103,19 @@ public class PaintFrame extends JFrame {
 		}
 	}
 	
+	//public void windowClosing(WindowEvent e){
+		
+	//}
+		
+	public static void main(String[] args){
+		if(args.length != 2)printUsageAndQuit();
+		
+		String host = args[0];
+		int port = Integer.parseInt(args[1]); 
+		
+		enableNimbus();
+		new PaintFrame(host, port);
+	}
 	private static void printUsageAndQuit()
 	{
 		System.out.println("Usage: PaintFrame <host> <port>");

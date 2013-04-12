@@ -1,10 +1,10 @@
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -26,15 +26,16 @@ public class SidePanel extends JPanel implements ActionListener {
 	JButton bucketButton;
 	JButton logoutButton; 
 	
-	DataInputStream in; 
-	DataOutputStream out;
-	
+	ObjectInputStream in;
+	ObjectOutputStream out;
 	ImageIcon pencilIcon;
 	ImageIcon bucketIcon;
-	
-	public SidePanel(DataInputStream in, DataOutputStream out){
-		setOpaque(false); 
-
+	PaintFrame frame;
+	public SidePanel(	ObjectInputStream in, 	ObjectOutputStream out, PaintFrame frame){
+		this.in = in;
+		this.out = out;
+		this.frame = frame;		
+		setOpaque(false);
 		loadTextures();
 		currentToolLabel = new JLabel();
 		onOperationChanged();
@@ -48,8 +49,6 @@ public class SidePanel extends JPanel implements ActionListener {
 		 
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		
-		this.in = in;
-		this.out = out;
 	}
 	 
 	private File getResource(String name)
@@ -80,8 +79,8 @@ public class SidePanel extends JPanel implements ActionListener {
 			byte[] bytes = new byte[32];
 			bytes[0] = 0;
 			try{
-				out.write(bytes);
-				System.exit(0);
+				out.writeObject(Constants.EXIT_TO_LOBBY);
+				frame.displayStartScreen();
 			}
 			catch(IOException ioe){
 				System.out.println("IOException from logout button");

@@ -4,51 +4,37 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class PaintApplet extends JPanel implements MouseListener, MouseMotionListener {
 	
-	public static final byte MODE_LOGOUT = 0;
-	public static final byte MODE_PENCIL = 1;
-	public static final byte MODE_BUCKET = 2;
-	
 	int prevMouseX = -1;
 	int prevMouseY = -1;
-	
-	byte id;
-	int[] data;
 	
 	BufferedImage image;
 	Graphics graphics;
 	
-	DataOutputStream out;
-	DataInputStream in;
-	
+	ObjectOutputStream out;
+	ObjectInputStream in;
 	SidePanel panel;
-	
-	public PaintApplet(DataInputStream in, DataOutputStream out) {
+	public PaintApplet(ObjectInputStream in, ObjectOutputStream out) {
 		setOpaque(false);
 		System.out.println("paint");
 		addMouseListener(this);
 		addMouseMotionListener(this);
         
-        ClientListenerThread clt = new ClientListenerThread(in, this);
-        clt.start();
-        
         setBackground(Color.blue);
         setVisible(true);
         
         image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
-		graphics = image.createGraphics();
+        graphics = image.createGraphics();
 		graphics.setColor(Color.black);
-		
-		id = 0;
-		data = new int[20];
 		
 		this.in = in;
 		this.out = out;
@@ -58,22 +44,19 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	{
 		this.panel = panel;
 	}
+	public void displayImage(ImageIcon i){
+		if(i != null)
+			graphics.drawImage(i.getImage(), 0, 0, null);
+		else
+			image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
+	}
 	
-	public synchronized void giveCommand(byte id, int[] data){
-		this.id = id;
-		for(int i=0; i < data.length; i++){
-			this.data[i] = data[i];
-		}
-		
-		graphics.drawLine(data[0], data[1], data[2], data[3]);
+	public synchronized void giveCommand(Object data){
+		DrawCommands.drawCommand(data, graphics);
+		repaint();
 	}
 	
 	public void paintComponent(Graphics g){
-		//System.out.println("paint: " + Long.toHexString(lineStartX) + " " + Long.toHexString(lineStartY) + " " + Long.toHexString(lineEndX) + " " + Long.toHexString(lineEndY));
-		//if(id == 1){
-		//	graphics.drawLine(data[0], data[1], data[2], data[3]);
-		//}
-		
 		g.drawImage(image, 0, 0, null);
 	}
 	
@@ -96,7 +79,7 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		 if(prevMouseX != -1 && prevMouseY != -1){
 			 graphics.drawLine(prevMouseX, prevMouseY, curMouseX, curMouseY);
 			 try{
-				 byte[] bytes = new byte[32];
+				 /*byte[] bytes = new byte[32];
 				 
 				 bytes[0] = MODE_PENCIL;
 				 
@@ -111,10 +94,11 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 					}
 					System.out.println();
 				 
-				 //String string = prevMouseX + " " + prevMouseY + " " + curMouseX + " " + curMouseY + "\n";
-				 //System.out.println("Send: " + string);
-				 //out.writeUTF(string);
-				 out.write(bytes);
+				 out.write(bytes);*/
+				 LineSegment line = new LineSegment(prevMouseX, prevMouseY, curMouseX, curMouseY);
+				 out.writeObject(line);
+				 out.flush();
+				 out.reset();
 			 }
 			 catch(IOException ioe){
 				 System.out.println("IOException");
