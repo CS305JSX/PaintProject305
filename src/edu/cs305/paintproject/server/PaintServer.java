@@ -62,15 +62,21 @@ class PaintServer {
 		//create new session or add to existing
 		thread.sessionMembers.clear();
 		ArrayList<WorkerThread> session = sessions.get(pictureName);
+		Logger.log(sessions.toString());
 		
 		//create a new session if one doesn't already exist for the picture
 		if(session == null){
+			Logger.log("creating session");
 			session = new ArrayList<WorkerThread>();
 			sessions.put(pictureName, session);
 			
 			BufferedImage image = null;
 			try{
-				image = ImageIO.read(new File("Server/Pictures/" + pictureName));
+				File imgFile = new File("Server/Pictures/" + pictureName);
+				if(!imgFile.exists())
+						ImageIO.write(new BufferedImage(400,400, BufferedImage.TYPE_3BYTE_BGR), "png", imgFile);
+				
+				image = ImageIO.read(imgFile);
 			}
 			catch(IOException ioe){
 				Logger.log(ioe,"while getting image in exit lobby...");

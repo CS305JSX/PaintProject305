@@ -37,7 +37,7 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
         setBackground(Color.blue);
         setVisible(true);
         
-        image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
+        image = new BufferedImage(400, 400, BufferedImage.TYPE_3BYTE_BGR);
         graphics = image.createGraphics();
 		graphics.setColor(Color.black);
 		
@@ -49,11 +49,14 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	{
 		this.panel = panel;
 	}
+	
 	public void displayImage(ImageIcon i){
-		if(i != null)
+		if(i != null){
+			graphics.clearRect(0, 0, i.getIconWidth(), i.getIconHeight());
 			graphics.drawImage(i.getImage(), 0, 0, null);
+		}
 		else
-			image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
+			image = new BufferedImage(400, 400, BufferedImage.TYPE_3BYTE_BGR);
 	}
 	
 	public synchronized void giveCommand(Object data){

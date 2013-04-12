@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.util.Logger;
 
 public class ClientListenerThread extends Thread {
@@ -30,6 +31,17 @@ public class ClientListenerThread extends Thread {
 				}
 				else if(data instanceof Vector){
 					frame.start.list.setListData((Vector<String>)data);
+				}
+				else if(data instanceof Integer){
+					if((Integer)data == Constants.REFRESH_PICTURE_NAMES){
+						try{
+							frame.out.writeObject(Constants.REQUEST_PICTURE_NAMES);
+							frame.out.flush();
+						}
+						catch(IOException ioe){
+							Logger.log(ioe,"while requesting picture names from client listener thread...");
+						}
+					}
 				}
 				else
 					frame.applet.giveCommand(data);

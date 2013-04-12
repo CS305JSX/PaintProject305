@@ -69,6 +69,8 @@ public class PaintFrame extends JFrame {
 		getContentPane().add(side);
 		getContentPane().add(applet);
 		
+		displayStartScreen();
+		
 		setVisible(true);
 		setSize(500, 500);
 	}

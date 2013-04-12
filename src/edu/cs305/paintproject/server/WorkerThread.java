@@ -69,12 +69,11 @@ public class WorkerThread extends Thread {
 				if(data instanceof PictureRequest){
 					PictureRequest request = (PictureRequest)data;
 					try{
-						File imgFile = new File("Server/Pictures/" + request.pictureName);
-						if(!imgFile.exists())
-								ImageIO.write(new BufferedImage(400,400, BufferedImage.TYPE_4BYTE_ABGR), "png", imgFile);
-						ImageIcon i = new ImageIcon(ImageIO.read(imgFile));
 						setCurrentSession(request.pictureName);
 						image = server.exitLobbyTo(this, currentSession);
+						ImageIcon i = new ImageIcon(image);
+						
+						
 						outToClient.writeObject(i);
 						outToClient.flush();
 					}
@@ -94,6 +93,7 @@ public class WorkerThread extends Thread {
 						break;
 					}
 					else if(message == Constants.REQUEST_PICTURE_NAMES){
+						Logger.log(currentSession);
 						send(getFiles(new File("Server/Pictures")), currentSession);
 					}
 					else if(message == Constants.EXIT_TO_LOBBY){

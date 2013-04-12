@@ -22,7 +22,7 @@ public class StartPanel extends JPanel implements ActionListener {
 	JPanel left, right;
 	JButton createNew, submit;
 	JTextField pictureName;
-	JList<String> list;
+	JList list;
 	JScrollPane scrollPane;
 	
 	ObjectInputStream in;
@@ -44,7 +44,7 @@ public class StartPanel extends JPanel implements ActionListener {
 		
 		right = new JPanel();
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
-		list = new JList<String>();
+		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		
@@ -72,7 +72,7 @@ public class StartPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == submit){
 			try{
-				out.writeObject(new PictureRequest(list.getSelectedValue()));
+				out.writeObject(new PictureRequest((String)(list.getSelectedValue())));
 				out.flush();
 			}
 			catch(IOException ioe){
