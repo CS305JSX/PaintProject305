@@ -2,8 +2,8 @@ package edu.cs305.paintproject.client;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -55,9 +55,9 @@ public class SidePanel extends JPanel implements ActionListener {
 		
 	}
 	 
-	private File getResource(String name)
+	private InputStream getResource(String name)
 	{
-		return new File(this.getClass().getClassLoader().getResource(name).getFile());
+		return this.getClass().getClassLoader().getResourceAsStream(name);
 	} 
 	
 	private void loadTextures()
