@@ -127,8 +127,39 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 
 	
 	public void mouseClicked(MouseEvent m) {
-		 
+		int curMouseX = m.getX();
+                int curMouseY = m.getY(); 
 		
+		LineSegment line = new LineSegment(curMouseX, curMouseY, curMouseX, curMouseY);
+		DrawCommands.drawLineSegmentWithWidth(line, graphics, 10);
+                         try{
+                                 /*byte[] bytes = new byte[32];
+                                 
+                                 bytes[0] = MODE_PENCIL;
+                                 
+                                 addInt(bytes, prevMouseX, 1);
+                                 addInt(bytes, prevMouseY, 5);
+                                 addInt(bytes, curMouseX, 9);
+                                 addInt(bytes, curMouseY, 13);
+                                 
+                                 Logger.log("Send: ");
+                                 for(int i=0; i<17; i++){
+                                                System.out.print(Long.toHexString(bytes[i] & 0xFF) + " ");
+                                        }
+                                        System.out.println();
+                                 
+                                 out.write(bytes);*/
+                                 
+                                 out.writeObject(line);
+                                 out.flush();
+                                 out.reset();
+                         }
+                         catch(IOException ioe){
+                                 Logger.log(ioe);
+                         }
+
+
+		repaint();
 	}
 
 	
