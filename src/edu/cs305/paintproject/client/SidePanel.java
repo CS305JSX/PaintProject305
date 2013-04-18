@@ -1,4 +1,5 @@
 package edu.cs305.paintproject.client;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +13,10 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
 import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.util.Logger;
@@ -28,13 +31,17 @@ public class SidePanel extends JPanel implements ActionListener {
 	JLabel currentToolLabel;
 	JButton pencilButton;
 	JButton bucketButton;
-	JButton logoutButton; 
+	JButton logoutButton;
+	JButton colorButton;
+	JSlider sizeSlider;
 	
 	ObjectInputStream in;
 	ObjectOutputStream out;
 	ImageIcon pencilIcon;
 	ImageIcon bucketIcon;
 	PaintFrame frame;
+	Color color;
+	
 	public SidePanel(	ObjectInputStream in, 	ObjectOutputStream out, PaintFrame frame){
 		this.in = in;
 		this.out = out;
@@ -46,12 +53,27 @@ public class SidePanel extends JPanel implements ActionListener {
 		this.add(currentToolLabel);
 		
 		pencilButton = addNewButton("Paint");
+		
+		sizeSlider = new JSlider(1, 255);
+		sizeSlider.setMinimumSize(new Dimension(100, 40));
+		sizeSlider.setPreferredSize(new Dimension(100, 40));
+		sizeSlider.setMaximumSize(new Dimension(100, 40));
+		sizeSlider.setPaintLabels(true);
+		sizeSlider.setPaintTicks(true);
+		sizeSlider.setMajorTickSpacing(127);
+		sizeSlider.setAlignmentX(LEFT_ALIGNMENT);
+		add(sizeSlider);
+		
 		bucketButton = addNewButton("Bucket");
-		logoutButton = addNewButton("Logout"); 
-		 
+		logoutButton = addNewButton("Logout");
+		colorButton = addNewButton("      ");
+		
+		color = Color.BLUE;
+		colorButton.setBackground(color);
+		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		 
 		add(Box.createRigidArea(new Dimension(10, 10)));
+		
 		
 	}
 	 
@@ -74,6 +96,7 @@ public class SidePanel extends JPanel implements ActionListener {
 	{
 		JButton btn = new JButton(name);
 		btn.addActionListener(this);
+		btn.setAlignmentX(LEFT_ALIGNMENT);
 		this.add(btn);
 		return btn;
 	}
@@ -99,6 +122,10 @@ public class SidePanel extends JPanel implements ActionListener {
 		{
 			op = Operation.Bucket;
 			onOperationChanged();
+		}
+		else if(e.getSource() == colorButton){
+			color = JColorChooser.showDialog(this, "Choose Background Color", color);
+			colorButton.setBackground(color);
 		}
 	}
 	

@@ -8,7 +8,7 @@ public class DrawCommands {
 	
 	public static void drawCommand(Object command, Graphics g){
 		if(command instanceof LineSegment){
-			drawLineSegmentWithWidth((LineSegment)command, g, 10);
+			drawLineSegmentWithWidth((LineSegment)command, g);
 		}
 	}
 	
@@ -17,9 +17,10 @@ public class DrawCommands {
 		g.drawLine(line.x1, line.y1, line.x2, line.y2);
 	}
 	
-	public static void drawLineSegmentWithWidth(LineSegment line, Graphics g, int width)
+	public static void drawLineSegmentWithWidth(LineSegment line, Graphics g)
 	{
-		g.setColor(new Color(0xffff0000, true));
+		int width = line.width & 0xFF;
+		g.setColor(new Color(line.color));
 		
 		int xp[] = new int[4];
 		int yp[] = new int[4];

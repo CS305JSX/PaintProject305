@@ -71,8 +71,6 @@ class PaintServer {
 			session = new ArrayList<WorkerThread>();
 			sessions.put(pictureName, session);
 			
-			addThreadToSession(thread, session);
-			
 			BufferedImage image = null;
 			try{
 				File imgFile = new File("Server/Pictures/" + pictureName);
@@ -94,6 +92,8 @@ class PaintServer {
 			}
 			images.put(pictureName, image);
 		}
+		
+		addThreadToSession(thread, session);
 		
 		return images.get(pictureName);
 	}
