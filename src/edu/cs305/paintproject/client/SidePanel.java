@@ -64,9 +64,9 @@ public class SidePanel extends JPanel implements ActionListener {
 		sizeSlider.setAlignmentX(LEFT_ALIGNMENT);
 		add(sizeSlider);
 		
-		bucketButton = addNewButton("Bucket");
-		logoutButton = addNewButton("Logout");
+		//bucketButton = addNewButton("Bucket");
 		colorButton = addNewButton("      ");
+		logoutButton = addNewButton("Logout");
 		
 		color = Color.BLUE;
 		colorButton.setBackground(color);
@@ -124,8 +124,11 @@ public class SidePanel extends JPanel implements ActionListener {
 			onOperationChanged();
 		}
 		else if(e.getSource() == colorButton){
-			color = JColorChooser.showDialog(this, "Choose Background Color", color);
-			colorButton.setBackground(color);
+			Color newColor = JColorChooser.showDialog(this, "Choose Background Color", color);
+			if(newColor != null){
+				color = newColor;
+				colorButton.setBackground(color);
+			}
 		}
 	}
 	
