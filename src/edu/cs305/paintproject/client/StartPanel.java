@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import edu.cs305.paintproject.Constants;
-import edu.cs305.paintproject.server.PictureRequest;
+import edu.cs305.paintproject.PictureRequest;
 import edu.cs305.paintproject.util.Logger;
 
 public class StartPanel extends JPanel implements ActionListener {

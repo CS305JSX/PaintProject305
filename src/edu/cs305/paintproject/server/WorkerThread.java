@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 
 import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.DrawCommands;
+import edu.cs305.paintproject.PictureRequest;
 import edu.cs305.paintproject.util.Logger;
 
 public class WorkerThread extends Thread {
