@@ -27,6 +27,11 @@ public class Logger {
 
 	private static void putLine(String line)
 	{
+		putLine(line, null);
+	}
+
+	private static void putLine(String line, Exception exception)
+	{
 		Date now = new Date(System.currentTimeMillis());
 
 		System.err.print(date_format.format(now));
@@ -34,6 +39,7 @@ public class Logger {
 		if(fh == null)return;
 
 		LogRecord record = new LogRecord(Level.INFO, line);
+		record.setThrown(exception);
 		fh.publish(record);
 	}
 
@@ -60,13 +66,15 @@ public class Logger {
 
 	public static void log(Exception e)
 	{
-		if(PRINT_MSGS)log(e.toString());
+		if(PRINT_MSGS)putLine(e.toString(),e);
 		if(PRINT_STACK)e.printStackTrace(System.err);
+
+		
 	}
 
 	public static void log(Exception e, String msg)
 	{
-		if(PRINT_MSGS)log(e + " " + msg);
+		if(PRINT_MSGS)putLine(e.toString() + " " + msg, e);
 		if(PRINT_STACK)e.printStackTrace(System.err);
 	}
 }
