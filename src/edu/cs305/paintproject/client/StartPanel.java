@@ -60,33 +60,16 @@ public class StartPanel extends JPanel implements ActionListener {
 		add(left);
 		add(right);
 		
-		try{
-			out.writeObject(Constants.REQUEST_PICTURE_NAMES);
-			out.flush();
-		}
-		catch(IOException ioe){
-			Logger.log(ioe,"while requesting picture names...");
-		}
+		frame.msm.sendRequestPictureNames();
 	}
 	
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == submit){
-			try{
-				out.writeObject(new PictureRequest((String)(list.getSelectedValue())));
-				out.flush();
-			}
-			catch(IOException ioe){
-				Logger.log(ioe,"while requesting picture files...");
-			}
-		}else if(e.getSource() == createNew)
+			frame.msm.sendRequestPicture(new PictureRequest((String)(list.getSelectedValue())));
+		}
+		else if(e.getSource() == createNew)
 		{
-			try{
-				out.writeObject(new PictureRequest(pictureName.getText()));
-				out.flush();
-			}
-			catch(IOException ioe){
-				Logger.log(ioe,"while requesting picture creation...");
-			}
+			frame.msm.sendRequestPicture(new PictureRequest(pictureName.getText()));
 		}
 	}
 }

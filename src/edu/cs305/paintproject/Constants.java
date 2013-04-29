@@ -9,4 +9,7 @@ public class Constants {
 	public static final int EXIT_TO_LOBBY = 3;
 	public static final int REFRESH_PICTURE_NAMES = 4;
 	
+	
+	public static final int CENTRALIZED_SERVER = 100;
+	public static final int PEER_TO_PEER = 101;
 }

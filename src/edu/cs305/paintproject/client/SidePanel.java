@@ -103,15 +103,8 @@ public class SidePanel extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == logoutButton){
-			byte[] bytes = new byte[32];
-			bytes[0] = 0;
-			try{
-				out.writeObject(Constants.EXIT_TO_LOBBY);
-				frame.displayStartScreen();
-			}
-			catch(IOException ioe){
-				Logger.log(ioe, "from logout button");
-			}
+			frame.msm.sendExitToLobby();
+			frame.displayStartScreen();
 		}
 		else if(e.getSource() == pencilButton)
 		{

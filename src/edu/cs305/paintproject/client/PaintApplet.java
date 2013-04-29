@@ -27,8 +27,9 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	
 	ObjectOutputStream out;
 	ObjectInputStream in;
-	SidePanel panel;
-	public PaintApplet(ObjectInputStream in, ObjectOutputStream out) {
+	PaintFrame frame;
+	
+	public PaintApplet(PaintFrame frame) {
 		setOpaque(false);
 		Logger.log("paint");
 		addMouseListener(this);
@@ -43,11 +44,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		
 		this.in = in;
 		this.out = out;
-	}
-	
-	public void setSidePanel(SidePanel panel)
-	{
-		this.panel = panel;
+		
+		this.frame = frame;
 	}
 	
 	public void displayImage(ImageIcon i){
@@ -79,89 +77,45 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	}
 	
 	public void mouseDragged(MouseEvent m) {
-		if(panel.op != SidePanel.Operation.Pencil)return;
+		if(frame.side.op != SidePanel.Operation.Pencil)return;
 		
 		int curMouseX = m.getX();
 		int curMouseY = m.getY();
 		
 		 if(prevMouseX != -1 && prevMouseY != -1){
-			 LineSegment line = new LineSegment(prevMouseX, prevMouseY, curMouseX, curMouseY, panel.color.getRGB(), (byte)panel.sizeSlider.getValue());
+			 LineSegment line = new LineSegment(prevMouseX, prevMouseY, curMouseX, curMouseY, frame.side.color.getRGB(), (byte)frame.side.sizeSlider.getValue());
 			 DrawCommands.drawLineSegmentWithWidth(line, graphics);
-			 try{
-				 /*byte[] bytes = new byte[32];
-				 
-				 bytes[0] = MODE_PENCIL;
-				 
-				 addInt(bytes, prevMouseX, 1);
-				 addInt(bytes, prevMouseY, 5);
-				 addInt(bytes, curMouseX, 9);
-				 addInt(bytes, curMouseY, 13);
-				 
-				 Logger.log("Send: ");
-				 for(int i=0; i<17; i++){
-						System.out.print(Long.toHexString(bytes[i] & 0xFF) + " ");
-					}
-					System.out.println();
-				 
-				 out.write(bytes);*/
-				 
-				 out.writeObject(line);
-				 out.flush();
-				 out.reset();
-			 }
-			 catch(IOException ioe){
-				 Logger.log(ioe);
-			 }
+			 frame.msm.sendLineSegment(line);
 		 }
 		
 		prevMouseX = m.getX();
 		prevMouseY = m.getY();
 		repaint();
 	}
-
 	
 	public void mouseMoved(MouseEvent m) {
 		 
 		
 	}
-
 	
 	public void mouseClicked(MouseEvent m) {
 		int curMouseX = m.getX();
-                int curMouseY = m.getY(); 
+        int curMouseY = m.getY(); 
 		
-		LineSegment line = new LineSegment(curMouseX, curMouseY, curMouseX, curMouseY, panel.color.getRGB(), (byte)panel.sizeSlider.getValue());
+		LineSegment line = new LineSegment(curMouseX, curMouseY, curMouseX, curMouseY, frame.side.color.getRGB(), (byte)frame.side.sizeSlider.getValue());
 		DrawCommands.drawLineSegmentWithWidth(line, graphics);
-                         try{
-                                 /*byte[] bytes = new byte[32];
-                                 
-                                 bytes[0] = MODE_PENCIL;
-                                 
-                                 addInt(bytes, prevMouseX, 1);
-                                 addInt(bytes, prevMouseY, 5);
-                                 addInt(bytes, curMouseX, 9);
-                                 addInt(bytes, curMouseY, 13);
-                                 
-                                 Logger.log("Send: ");
-                                 for(int i=0; i<17; i++){
-                                                System.out.print(Long.toHexString(bytes[i] & 0xFF) + " ");
-                                        }
-                                        System.out.println();
-                                 
-                                 out.write(bytes);*/
-                                 
-                                 out.writeObject(line);
-                                 out.flush();
-                                 out.reset();
-                         }
-                         catch(IOException ioe){
-                                 Logger.log(ioe);
-                         }
+		frame.msm.sendLineSegment(line);
 
 
 		repaint();
 	}
-
+	
+	public void mouseReleased(MouseEvent m) {
+		 prevMouseX = -1;
+		 prevMouseY = -1;
+		 
+		 repaint();
+	}
 	
 	public void mouseEntered(MouseEvent m) {
 		 
@@ -179,15 +133,5 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		 
 		
 	}
-
-	
-	public void mouseReleased(MouseEvent m) {
-		 prevMouseX = -1;
-		 prevMouseY = -1;
-		 
-		 repaint();
-	}
-	
-	
 	
 }
