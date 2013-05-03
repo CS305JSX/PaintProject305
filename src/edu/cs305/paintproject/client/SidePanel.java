@@ -85,8 +85,8 @@ public class SidePanel extends JPanel implements ActionListener {
 	private void loadTextures()
 	{ 
 		 try { 
-			pencilIcon = new ImageIcon(ImageIO.read(getResource("img/pencil.png"))); 
-			bucketIcon = new ImageIcon(ImageIO.read(getResource("img/bucket.png")));
+			//pencilIcon = new ImageIcon(ImageIO.read(getResource("img/pencil.png"))); 
+			//bucketIcon = new ImageIcon(ImageIO.read(getResource("img/bucket.png")));
 		} catch (Exception e) {
 			Logger.log(e, "while loading textures");
 		}

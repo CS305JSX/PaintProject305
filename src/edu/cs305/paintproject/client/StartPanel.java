@@ -69,6 +69,7 @@ public class StartPanel extends JPanel implements ActionListener {
 		}
 		else if(e.getSource() == createNew)
 		{
+			Logger.log("Create Picture button pressed");
 			frame.msm.sendRequestPicture(new PictureRequest(pictureName.getText()));
 		}
 	}

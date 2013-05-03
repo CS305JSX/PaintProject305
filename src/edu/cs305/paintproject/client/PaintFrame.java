@@ -15,6 +15,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import edu.cs305.paintproject.CentralizedServerSendMethods;
 import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.MessageSendMethods;
+import edu.cs305.paintproject.P2PSendMethods;
 import edu.cs305.paintproject.util.Logger;
 
 @SuppressWarnings("serial")
@@ -29,7 +30,7 @@ public class PaintFrame extends JFrame {
 	PaintApplet applet;
 	SidePanel side;
 	
-	ClientListenerThread clt;
+	Thread clt;
 	
 	public PaintFrame(String host, int port, int serverType){
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
@@ -42,9 +43,13 @@ public class PaintFrame extends JFrame {
 		}
 		
 		if(serverType == Constants.CENTRALIZED_SERVER){
-			this.msm = new CentralizedServerSendMethods(clientSocket);
+			msm = new CentralizedServerSendMethods(clientSocket);
+			clt = new ClientListenerThread(clientSocket, this);
 		}
-		clt = new ClientListenerThread(clientSocket, this);
+		else if(serverType == Constants.PEER_TO_PEER){
+			msm = new P2PSendMethods(clientSocket);
+			clt = new P2PListenerThread(clientSocket, this);
+		}
 		clt.start();
 		
 		addWindowListener(new WindowAdapter(){
@@ -108,7 +113,7 @@ public class PaintFrame extends JFrame {
 		enableNimbus();
 		Logger.startLogging("client.log");
 		
-		new PaintFrame(host, port, Constants.CENTRALIZED_SERVER);
+		new PaintFrame(host, port, Constants.PEER_TO_PEER);
 	}
 	private static void printUsageAndQuit()
 	{
