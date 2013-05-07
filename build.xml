@@ -15,6 +15,12 @@
 	</java>
   </target>
 
+  <target name = "run-p2pserver" depends = "compile">
+	<java jar="jar/p2pserver.jar" fork='true'>
+		<arg line="12356" />
+	</java>
+  </target>
+
   <target name="compile">
     <javac srcdir  = "src" 
 		   destdir = "bin" 
@@ -33,6 +39,13 @@
 		 <manifest>
 			<attribute name="Main-Class"
 				value="edu.cs305.paintproject.server.PaintServer"/>
+		 </manifest>
+	</jar>
+	<jar destfile = "jar/p2pserver.jar" 
+		 basedir  = "bin">
+		 <manifest>
+			<attribute name="Main-Class"
+				value="edu.cs305.paintproject.p2pserver.P2PServer"/>
 		 </manifest>
 	</jar>
   </target>
