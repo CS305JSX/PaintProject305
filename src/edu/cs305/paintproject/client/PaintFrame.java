@@ -24,13 +24,13 @@ public class PaintFrame extends JFrame {
 	Socket clientSocket;
 	ObjectOutputStream out;
 	ObjectInputStream in;
-	MessageSendMethods msm;
+	public MessageSendMethods msm;
 	
 	StartPanel start;
 	PaintApplet applet;
 	SidePanel side;
 	
-	Thread clt;
+	public Thread clt;
 	
 	public PaintFrame(String host, int port, int serverType){
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
@@ -47,7 +47,7 @@ public class PaintFrame extends JFrame {
 			clt = new ClientListenerThread(clientSocket, this);
 		}
 		else if(serverType == Constants.PEER_TO_PEER){
-			msm = new P2PSendMethods(clientSocket);
+			msm = new P2PSendMethods(clientSocket, this);
 			clt = new P2PListenerThread(clientSocket, this);
 		}
 		clt.start();
@@ -61,7 +61,9 @@ public class PaintFrame extends JFrame {
 			}
 		});
 		
+		Logger.log("here*");
 		side = new SidePanel(in, out, this);
+		Logger.log("here---");
 		applet = new PaintApplet(this);
 		start = new StartPanel(in, out, this);
 		

@@ -42,9 +42,6 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
         graphics = image.createGraphics();
 		graphics.setColor(Color.black);
 		
-		this.in = in;
-		this.out = out;
-		
 		this.frame = frame;
 	}
 	
@@ -84,8 +81,15 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		
 		 if(prevMouseX != -1 && prevMouseY != -1){
 			 LineSegment line = new LineSegment(prevMouseX, prevMouseY, curMouseX, curMouseY, frame.side.color.getRGB(), (byte)frame.side.sizeSlider.getValue());
-			 DrawCommands.drawLineSegmentWithWidth(line, graphics);
+			 
 			 frame.msm.sendLineSegment(line);
+			 
+			 if(frame.clt instanceof P2PListenerThread){
+				 ((P2PListenerThread)frame.clt).addLineSegment(line, this);
+			 }
+			 else{
+				 DrawCommands.drawLineSegmentWithWidth(line, graphics);
+			 }
 		 }
 		
 		prevMouseX = m.getX();
@@ -103,8 +107,15 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
         int curMouseY = m.getY(); 
 		
 		LineSegment line = new LineSegment(curMouseX, curMouseY, curMouseX, curMouseY, frame.side.color.getRGB(), (byte)frame.side.sizeSlider.getValue());
-		DrawCommands.drawLineSegmentWithWidth(line, graphics);
+		
 		frame.msm.sendLineSegment(line);
+		if(frame.clt instanceof P2PListenerThread){
+			 ((P2PListenerThread)frame.clt).addLineSegment(line, this);
+		 }
+		else{
+			DrawCommands.drawLineSegmentWithWidth(line, graphics);
+		}
+		
 
 
 		repaint();
