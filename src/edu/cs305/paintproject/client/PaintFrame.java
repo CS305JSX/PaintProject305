@@ -12,7 +12,10 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import edu.cs305.paintproject.CentralizedServerSendMethods;
 import edu.cs305.paintproject.Constants;
+import edu.cs305.paintproject.MessageSendMethods;
+import edu.cs305.paintproject.P2PSendMethods;
 import edu.cs305.paintproject.util.Logger;
 
 @SuppressWarnings("serial")
@@ -21,49 +24,48 @@ public class PaintFrame extends JFrame {
 	Socket clientSocket;
 	ObjectOutputStream out;
 	ObjectInputStream in;
+	public MessageSendMethods msm;
 	
 	StartPanel start;
 	PaintApplet applet;
 	SidePanel side;
 	
-	ClientListenerThread clt;
+	public Thread clt;
 	
-	public PaintFrame(String host, int port){
+	public PaintFrame(String host, int port, int serverType){
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
 		try{
-			clientSocket = new Socket(host, port);  
-	        out = new ObjectOutputStream(clientSocket.getOutputStream());
-	        out.flush();
-	        in = new ObjectInputStream(clientSocket.getInputStream());
+			clientSocket = new Socket(host, port);
 		}		
 		catch(IOException ioe){
 			Logger.log(ioe, "setting up object streams...");
 		}
 		
-		clt = new ClientListenerThread(in, this);
+		if(serverType == Constants.CENTRALIZED_SERVER){
+			msm = new CentralizedServerSendMethods(clientSocket);
+			clt = new ClientListenerThread(clientSocket, this);
+		}
+		else if(serverType == Constants.PEER_TO_PEER){
+			msm = new P2PSendMethods(clientSocket, this);
+			clt = new P2PListenerThread(clientSocket, this);
+		}
 		clt.start();
 		
 		addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
 				Logger.log("close");
 				clt.interrupt();
-				try{
-					out.writeObject(Constants.LOGOUT);
-					out.flush();
-					System.exit(0);
-				}
-				catch(IOException ioe){
-					Logger.log(ioe, "while logging out...");
-				}
-				
+				msm.sendLogout();
+				System.exit(0);
 			}
 		});
 		
+		Logger.log("here*");
 		side = new SidePanel(in, out, this);
-		applet = new PaintApplet(in, out);
+		Logger.log("here---");
+		applet = new PaintApplet(this);
 		start = new StartPanel(in, out, this);
-		applet.setSidePanel(side);
 		
 		getContentPane().add(start);
 		getContentPane().add(side);
@@ -77,9 +79,7 @@ public class PaintFrame extends JFrame {
 	
 	public void displayApplet(ImageIcon i){
 		applet.displayImage(i);
-		//getContentPane().remove(start);
-		//getContentPane().add(side);
-		//getContentPane().add(applet);
+		
 		start.setVisible(false);
 		side.setVisible(true);
 		applet.setVisible(true);
@@ -87,9 +87,6 @@ public class PaintFrame extends JFrame {
 	}
 	
 	public void displayStartScreen(){
-		//getContentPane().add(start);
-		//getContentPane().remove(side);
-		//getContentPane().remove(applet);
 		start.setVisible(true);
 		side.setVisible(false);
 		applet.setVisible(false);
@@ -109,10 +106,6 @@ public class PaintFrame extends JFrame {
 		}
 	}
 	
-	//public void windowClosing(WindowEvent e){
-		
-	//}
-		
 	public static void main(String[] args){
 		if(args.length != 2)printUsageAndQuit();
 		
@@ -121,7 +114,8 @@ public class PaintFrame extends JFrame {
 		
 		enableNimbus();
 		Logger.startLogging("client.log");
-		new PaintFrame(host, port);
+		
+		new PaintFrame(host, port, Constants.PEER_TO_PEER);
 	}
 	private static void printUsageAndQuit()
 	{

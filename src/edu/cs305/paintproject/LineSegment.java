@@ -1,10 +1,12 @@
 package edu.cs305.paintproject;
-import java.io.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class LineSegment implements Serializable {
 	private static final long serialVersionUID = -2941428897802405283L;
 	public int x1, x2, y1, y2, color;
 	public byte width;
+	public Timestamp timestamp;
 	
 	public LineSegment(int x1, int y1, int x2, int y2, int color, byte width){
 		this.x1 = x1;

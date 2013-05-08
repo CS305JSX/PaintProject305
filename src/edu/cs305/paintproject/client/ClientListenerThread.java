@@ -2,6 +2,7 @@ package edu.cs305.paintproject.client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.Socket;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -11,11 +12,18 @@ import edu.cs305.paintproject.util.Logger;
 
 public class ClientListenerThread extends Thread {
 	
+	Socket clientSocket;
 	ObjectInputStream in;
 	PaintFrame frame;
 	
-	public ClientListenerThread(ObjectInputStream in, PaintFrame frame){
-		this.in = in;
+	public ClientListenerThread(Socket clientSocket, PaintFrame frame){
+		this.clientSocket = clientSocket;
+		try{
+			this.in = new ObjectInputStream(clientSocket.getInputStream());
+		}
+		catch(IOException ioe){
+			Logger.log(ioe, "setting up object input stream...");
+		}
 		this.frame = frame;
 	}
 	

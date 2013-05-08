@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 
 import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.DrawCommands;
+import edu.cs305.paintproject.PictureRequest;
 import edu.cs305.paintproject.util.Logger;
 
 public class WorkerThread extends Thread {
@@ -51,6 +52,7 @@ public class WorkerThread extends Thread {
 		
 		try{
 			outToClient.writeObject(data);
+			outToClient.flush();
 		}
 		catch(IOException ioe){
 			Logger.log(ioe,"IOException while sending to client...");
@@ -59,6 +61,7 @@ public class WorkerThread extends Thread {
 		return true;
 	}
 	
+	//synchronization might be unneccesary
 	private synchronized void setCurrentSession(String currentSession){
 		this.currentSession = currentSession;
 	}
@@ -71,18 +74,18 @@ public class WorkerThread extends Thread {
 				
 				if(data instanceof PictureRequest){
 					PictureRequest request = (PictureRequest)data;
-					try{
+					//try{
 						setCurrentSession(request.pictureName);
 						image = server.exitLobbyTo(this, currentSession);
 						ImageIcon i = new ImageIcon(image);
 						
-						
-						outToClient.writeObject(i);
-						outToClient.flush();
-					}
-					catch(IOException ioe){
-						Logger.log(ioe,"IOException while accessing picture file...");
-					}
+						send(i, currentSession);
+						//outToClient.writeObject(i);
+						//outToClient.flush();
+					//}
+					//catch(IOException ioe){
+					//	Logger.log(ioe,"IOException while accessing picture file...");
+					//}
 				}
 				else if(data instanceof Integer){
 					int message = (Integer)data;

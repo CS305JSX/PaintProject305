@@ -100,8 +100,8 @@ public class SidePanel extends JPanel implements ActionListener, ChangeListener{
 	private void loadTextures()
 	{ 
 		 try { 
-			pencilIcon = new ImageIcon(ImageIO.read(getResource("img/pencil.png"))); 
-			bucketIcon = new ImageIcon(ImageIO.read(getResource("img/bucket.png")));
+			//pencilIcon = new ImageIcon(ImageIO.read(getResource("img/pencil.png"))); 
+			//bucketIcon = new ImageIcon(ImageIO.read(getResource("img/bucket.png")));
 		} catch (Exception e) {
 			Logger.log(e, "while loading textures");
 		}
@@ -118,15 +118,8 @@ public class SidePanel extends JPanel implements ActionListener, ChangeListener{
 	
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == logoutButton){
-			byte[] bytes = new byte[32];
-			bytes[0] = 0;
-			try{
-				out.writeObject(Constants.EXIT_TO_LOBBY);
-				frame.displayStartScreen();
-			}
-			catch(IOException ioe){
-				Logger.log(ioe, "from logout button");
-			}
+			frame.msm.sendExitToLobby();
+			frame.displayStartScreen();
 		}
 		else if(e.getSource() == pencilButton)
 		{

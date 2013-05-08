@@ -117,11 +117,11 @@ class PaintServer {
 	public void addThreadToSession(WorkerThread thread, ArrayList<WorkerThread> session){
 		thread.sessionMembers.addAll(session);
 		
+		session.add(thread);
+		
 		for(WorkerThread t: session){
 			t.sessionMembers.add(thread);
 		}
-		
-		session.add(thread);
 	}
 	
 	public static String getFiles(File folder){
