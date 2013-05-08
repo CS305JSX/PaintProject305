@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -38,11 +38,21 @@ public class P2PServer {
 		
 		while(true) {
 			Socket connectionSocket = welcomeSocket.accept();
-			Logger.log(connectionSocket.getInetAddress());
+			Logger.log(connectionSocket.getInetAddress().getHostAddress());
+			removeIfPresent(connectionSocket.getInetAddress().getHostAddress());
 			WorkerThread worker = new WorkerThread(connectionSocket, this);
 			worker.start();
 			addToLobby(worker);
 		} 
+	}
+	
+	public synchronized void removeIfPresent(String address){
+		for(String string: sessions.keySet()){
+			if(sessions.get(string).contains(address)){
+				sessions.get(string).remove(address);
+				Logger.log("removed");
+			}
+		}
 	}
 	
 	public synchronized void addToSession(String address, String fileName, WorkerThread worker, boolean updateOthers){
@@ -118,7 +128,7 @@ class WorkerThread extends Thread {
 				out.flush();
 			}
 			
-			if(data instanceof ImageIcon){
+			if(data instanceof ArrayList){
 				out.close();
 				available = false;
 			}
@@ -148,8 +158,11 @@ class WorkerThread extends Thread {
 					}
 					image = new ImageIcon(ImageIO.read(imgFile));
 					
+					//if(sessions.get(fileName))
+						send(image);
+					
+					send((new Date()).getTime());
 					server.addToSession(peerSocket.getInetAddress().getHostAddress(), fileName, this, updateOthers);
-					send(image);
 					break;
 				}
 				else if(data instanceof Integer){

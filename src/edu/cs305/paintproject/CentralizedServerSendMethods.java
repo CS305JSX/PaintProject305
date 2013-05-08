@@ -71,16 +71,16 @@ public class CentralizedServerSendMethods implements MessageSendMethods {
 			System.out.println("IOException while requesting a picture.");
 		}
 	}
-
-	@Override
+	
 	public void addDestination(Socket socket) {
-		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
+	
 	public void removeDestination(Socket socket) {
-		// TODO Auto-generated method stub
+		
+	}
+	
+	public void closeCentralServerOutput() {
 		
 	}
 	

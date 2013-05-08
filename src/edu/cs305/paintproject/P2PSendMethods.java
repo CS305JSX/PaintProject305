@@ -7,22 +7,20 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-import edu.cs305.paintproject.client.P2PListenerThread;
 import edu.cs305.paintproject.client.PaintFrame;
 import edu.cs305.paintproject.util.Logger;
 
 public class P2PSendMethods implements MessageSendMethods {
 	
-	Socket centralServerSocket;
 	ObjectOutputStream centralServerOut;
-	ArrayList<ObjectOutputStream> outputs;
+	public ArrayList<ObjectOutputStream> outputs;
+	public ArrayList<String> addresses;
 	PaintFrame frame;
 	
-	public P2PSendMethods(Socket centralServerSocket, PaintFrame frame){
-		this.centralServerSocket = centralServerSocket;
+	public P2PSendMethods(PaintFrame frame){
 		this.frame = frame;
 		try{
-			centralServerOut = new ObjectOutputStream(centralServerSocket.getOutputStream());
+			centralServerOut = new ObjectOutputStream(frame.centralServerSocket.getOutputStream());
 			centralServerOut.flush();
 		}
 		catch(IOException ioe){
@@ -30,6 +28,7 @@ public class P2PSendMethods implements MessageSendMethods {
 		}
 		
 		outputs = new ArrayList<ObjectOutputStream>();
+		addresses = new ArrayList<String>();
 	}
 	
 	public void sendLogout() {
@@ -47,13 +46,26 @@ public class P2PSendMethods implements MessageSendMethods {
 				Logger.log(ioe, "IOException sending ExitToLobby.");
 			}
 		}
+		outputs.clear();
+		addresses.clear();
+		
+		frame.p2pListener.reconnectToCentralServer();
+		try{
+			centralServerOut = new ObjectOutputStream(frame.centralServerSocket.getOutputStream());
+			centralServerOut.flush();
+		}
+		catch(IOException ioe){
+			Logger.log(ioe, "IOException setting up output stream to central server.");
+		}
 	}
 	
 	public synchronized void sendLineSegment(LineSegment line) {
+		Logger.log(outputs.size());
 		for(ObjectOutputStream out: outputs){
 			try{
 				Date date= new Date();
-				line.timestamp = new Timestamp(date.getTime());
+				line.time = date.getTime() + frame.p2pListener.timeDifference;
+				Logger.log("time: " + line.time);
 				out.writeObject(line);
 				out.flush();
 			}
@@ -88,14 +100,30 @@ public class P2PSendMethods implements MessageSendMethods {
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 			out.flush();
 			outputs.add(out);
+			addresses.add(socket.getInetAddress().getHostAddress());
 		}
 		catch(IOException ioe){
 			Logger.log(ioe, "IOException adding destination.");
 		}
 	}
 	
-	public synchronized void removeDestination(Socket socket) {
+	public synchronized void removeDestination(Socket socket){
+		int index = addresses.indexOf(socket.getInetAddress().getHostAddress());
+		Logger.log(index);
 		
+		if(index >= 0){
+			addresses.remove(index);
+			outputs.remove(index);
+		}
+	}
+	
+	public synchronized void closeCentralServerOutput() {
+		try{
+			centralServerOut.close();
+		}
+		catch(IOException ioe){
+			Logger.log(ioe, "IOException closing centralServerOut.");
+		}
 	}
 
 }

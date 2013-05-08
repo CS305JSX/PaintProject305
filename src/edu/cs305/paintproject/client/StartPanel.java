@@ -25,13 +25,9 @@ public class StartPanel extends JPanel implements ActionListener {
 	JList list;
 	JScrollPane scrollPane;
 	
-	ObjectInputStream in;
-	ObjectOutputStream out;
 	PaintFrame frame;
 	
-	public StartPanel(ObjectInputStream in, ObjectOutputStream out, PaintFrame frame){
-		this.in = in;
-		this.out = out;
+	public StartPanel(PaintFrame frame){
 		this.frame = frame;
 		
 		left = new JPanel();

@@ -1,7 +1,10 @@
 package edu.cs305.paintproject;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+
+import edu.cs305.paintproject.util.Logger;
 
 public interface MessageSendMethods {
 	
@@ -13,4 +16,5 @@ public interface MessageSendMethods {
 	
 	public void addDestination(Socket socket);
 	public void removeDestination(Socket socket);
+	public void closeCentralServerOutput();
 }

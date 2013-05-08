@@ -21,51 +21,59 @@ import edu.cs305.paintproject.util.Logger;
 @SuppressWarnings("serial")
 public class PaintFrame extends JFrame {
 	
-	Socket clientSocket;
-	ObjectOutputStream out;
-	ObjectInputStream in;
+	public Socket centralServerSocket;
 	public MessageSendMethods msm;
+	
+	String host;
+	int port;
 	
 	StartPanel start;
 	PaintApplet applet;
 	SidePanel side;
 	
 	public Thread clt;
+	public P2PListener p2pListener;
 	
 	public PaintFrame(String host, int port, int serverType){
+		this.host = host;
+		this.port = port;
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
 		try{
-			clientSocket = new Socket(host, port);
+			centralServerSocket = new Socket(host, port);
 		}		
 		catch(IOException ioe){
 			Logger.log(ioe, "setting up object streams...");
 		}
 		
 		if(serverType == Constants.CENTRALIZED_SERVER){
-			msm = new CentralizedServerSendMethods(clientSocket);
-			clt = new ClientListenerThread(clientSocket, this);
+			msm = new CentralizedServerSendMethods(centralServerSocket);
+			clt = new ClientListenerThread(centralServerSocket, this);
+			clt.start();
+			
+			p2pListener = null;
 		}
 		else if(serverType == Constants.PEER_TO_PEER){
-			msm = new P2PSendMethods(clientSocket, this);
-			clt = new P2PListenerThread(clientSocket, this);
+			msm = new P2PSendMethods(this);
+			p2pListener = new P2PListener(this);
+			
+			clt = null;
 		}
-		clt.start();
+		
 		
 		addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
 				Logger.log("close");
-				clt.interrupt();
+				if(clt != null)
+					clt.interrupt();
 				msm.sendLogout();
 				System.exit(0);
 			}
 		});
 		
-		Logger.log("here*");
-		side = new SidePanel(in, out, this);
-		Logger.log("here---");
+		side = new SidePanel(this);
 		applet = new PaintApplet(this);
-		start = new StartPanel(in, out, this);
+		start = new StartPanel(this);
 		
 		getContentPane().add(start);
 		getContentPane().add(side);

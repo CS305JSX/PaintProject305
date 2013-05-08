@@ -84,8 +84,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 			 
 			 frame.msm.sendLineSegment(line);
 			 
-			 if(frame.clt instanceof P2PListenerThread){
-				 ((P2PListenerThread)frame.clt).addLineSegment(line, this);
+			 if(line.time != -1){
+				 frame.p2pListener.addLineSegment(line, this);
 			 }
 			 else{
 				 DrawCommands.drawLineSegmentWithWidth(line, graphics);
@@ -109,8 +109,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		LineSegment line = new LineSegment(curMouseX, curMouseY, curMouseX, curMouseY, frame.side.color.getRGB(), (byte)frame.side.sizeSlider.getValue());
 		
 		frame.msm.sendLineSegment(line);
-		if(frame.clt instanceof P2PListenerThread){
-			 ((P2PListenerThread)frame.clt).addLineSegment(line, this);
+		if(line.time != -1){
+			frame.p2pListener.addLineSegment(line, this);
 		 }
 		else{
 			DrawCommands.drawLineSegmentWithWidth(line, graphics);

@@ -35,16 +35,12 @@ public class SidePanel extends JPanel implements ActionListener {
 	JButton colorButton;
 	JSlider sizeSlider;
 	
-	ObjectInputStream in;
-	ObjectOutputStream out;
 	ImageIcon pencilIcon;
 	ImageIcon bucketIcon;
 	PaintFrame frame;
 	Color color;
 	
-	public SidePanel(	ObjectInputStream in, 	ObjectOutputStream out, PaintFrame frame){
-		this.in = in;
-		this.out = out;
+	public SidePanel(PaintFrame frame){
 		this.frame = frame;		
 		setOpaque(false);
 		loadTextures();
