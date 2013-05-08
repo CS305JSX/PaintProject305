@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.Integer;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -17,12 +18,15 @@ import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.util.Logger;
 
 @SuppressWarnings("serial")
-public class SidePanel extends JPanel implements ActionListener {
+public class SidePanel extends JPanel implements ActionListener, ChangeListener{
 	
 	enum Operation {Pencil, Bucket}; 
 	Operation op = Operation.Pencil;
@@ -34,6 +38,7 @@ public class SidePanel extends JPanel implements ActionListener {
 	JButton logoutButton;
 	JButton colorButton;
 	JSlider sizeSlider;
+	JTextField sizeField;
 	
 	ImageIcon pencilIcon;
 	ImageIcon bucketIcon;
@@ -58,7 +63,17 @@ public class SidePanel extends JPanel implements ActionListener {
 		sizeSlider.setPaintTicks(true);
 		sizeSlider.setMajorTickSpacing(127);
 		sizeSlider.setAlignmentX(LEFT_ALIGNMENT);
+		sizeSlider.addChangeListener(this);
 		add(sizeSlider);
+
+		sizeField = new JTextField(1);
+		sizeField.setMinimumSize(new Dimension(50, 30));
+		sizeField.setPreferredSize(new Dimension(50, 30));
+		sizeField.setMaximumSize(new Dimension(50, 30));
+		sizeField.setText(String.valueOf(sizeSlider.getValue()));
+		sizeField.setAlignmentX(LEFT_ALIGNMENT);
+		sizeField.addActionListener(this);
+		add(sizeField);
 		
 		//bucketButton = addNewButton("Bucket");
 		colorButton = addNewButton("      ");
@@ -119,6 +134,15 @@ public class SidePanel extends JPanel implements ActionListener {
 				colorButton.setBackground(color);
 			}
 		}
+		else if(e.getSource() == sizeField){
+			sizeSlider.setValue(Integer.valueOf(sizeField.getText()));
+		}
+	}
+
+	public void stateChanged(ChangeEvent e){
+		if(e.getSource() == sizeSlider){
+                        sizeField.setText(String.valueOf(sizeSlider.getValue()));
+                }
 	}
 	
 	private void onOperationChanged()
