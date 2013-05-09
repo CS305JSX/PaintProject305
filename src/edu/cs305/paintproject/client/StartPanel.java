@@ -22,7 +22,7 @@ public class StartPanel extends JPanel implements ActionListener {
 	JPanel left, right;
 	JButton createNew, submit;
 	JTextField pictureName;
-	JList list;
+	public JList list;
 	JScrollPane scrollPane;
 	
 	PaintFrame frame;

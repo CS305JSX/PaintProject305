@@ -4,6 +4,8 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import javax.swing.ImageIcon;
+
 import edu.cs305.paintproject.util.Logger;
 
 public class CentralizedServerSendMethods implements MessageSendMethods {
@@ -81,6 +83,18 @@ public class CentralizedServerSendMethods implements MessageSendMethods {
 	}
 	
 	public void closeCentralServerOutput() {
+		
+	}
+
+	@Override
+	public void sendPictureRequestToPeer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendPicture(ImageIcon image, String string) {
+		// TODO Auto-generated method stub
 		
 	}
 	

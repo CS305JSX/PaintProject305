@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 
 import edu.cs305.paintproject.Constants;
 import edu.cs305.paintproject.LineSegment;
+import edu.cs305.paintproject.PictureRequest;
 import edu.cs305.paintproject.util.Logger;
 
 public class P2PListener {
@@ -172,6 +173,8 @@ class ListenerThread extends Thread {
 		notify();
 	}
 	
+	boolean receivedImage = false;
+	
 	@SuppressWarnings("unchecked")
 	public void run(){
 		while(socket == null){
@@ -203,10 +206,19 @@ class ListenerThread extends Thread {
 					Logger.log("Recieved Vector");
 					frame.start.list.setListData((Vector<String>)data);
 				}
+				else if(data instanceof PictureRequest){
+					Logger.log("Received PictureRequest");
+					
+					String fileName = frame.applet.getFileName();
+					ImageIcon image = new ImageIcon(frame.applet.image);
+					
+					frame.msm.sendPicture(image, socket.getInetAddress().getHostAddress());
+				}
 				else if(data instanceof ImageIcon){
 					Logger.log("Recieved ImageIcon");
 					ImageIcon image = (ImageIcon)data;
 					frame.displayApplet(image);
+					receivedImage = true;
 				}
 				else if(data instanceof ArrayList){//list of peers, received after choosing file on server
 					Logger.log("Recieved ArrayList");
@@ -228,6 +240,8 @@ class ListenerThread extends Thread {
 					frame.msm.closeCentralServerOutput();
 					socket.close(); //close connection to the central server
 					
+					if(!receivedImage)
+						frame.msm.sendPictureRequestToPeer();
 					waitForCentralServer();
 					Logger.log("awoken");
 				}

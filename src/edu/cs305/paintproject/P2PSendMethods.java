@@ -3,9 +3,11 @@ package edu.cs305.paintproject;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
+
+import javax.swing.ImageIcon;
 
 import edu.cs305.paintproject.client.PaintFrame;
 import edu.cs305.paintproject.util.Logger;
@@ -32,7 +34,8 @@ public class P2PSendMethods implements MessageSendMethods {
 	}
 	
 	public void sendLogout() {
-		
+		sendExitToLobby();
+		System.exit(0);
 	}
 	
 	public synchronized void sendExitToLobby() {
@@ -53,6 +56,10 @@ public class P2PSendMethods implements MessageSendMethods {
 		try{
 			centralServerOut = new ObjectOutputStream(frame.centralServerSocket.getOutputStream());
 			centralServerOut.flush();
+			
+			Logger.log("SENT BACKUP: " + frame.applet.getFileName());
+			ImageBackup backup = new ImageBackup(frame.applet.getFileName(), new ImageIcon(frame.applet.image));
+			centralServerOut.writeObject(backup);
 		}
 		catch(IOException ioe){
 			Logger.log(ioe, "IOException setting up output stream to central server.");
@@ -75,6 +82,32 @@ public class P2PSendMethods implements MessageSendMethods {
 		}
 	}
 	
+	public synchronized void sendPictureRequestToPeer(){
+		try{
+			String fileName = (String)frame.start.list.getSelectedValue();
+			frame.applet.setFileName(fileName);
+			ObjectOutputStream out = outputs.get((new Random()).nextInt(outputs.size()));
+			out.writeObject(new PictureRequest(fileName));
+		}
+		catch(IOException ioe){
+			Logger.log("IOException requesting picture from peer.");
+		}
+	}
+	
+	public synchronized void sendPicture(ImageIcon image, String address){
+		for(int i=0; i<addresses.size(); i++){
+			if(addresses.get(i).equals(address)){
+				try{
+					outputs.get(i).writeObject(image);
+					break;
+				}
+				catch(IOException ioe){
+					Logger.log(ioe, "IOException sending image from peer to peer");
+				}
+			}
+		}
+	}
+	
 	public void sendRequestPictureNames() {
 		try{
 			centralServerOut.writeObject(Constants.REQUEST_PICTURE_NAMES);
@@ -87,6 +120,7 @@ public class P2PSendMethods implements MessageSendMethods {
 	
 	public void sendRequestPicture(PictureRequest request) {
 		try{
+			frame.applet.setFileName(request.pictureName);
 			centralServerOut.writeObject(request);
 			centralServerOut.flush();
 		}

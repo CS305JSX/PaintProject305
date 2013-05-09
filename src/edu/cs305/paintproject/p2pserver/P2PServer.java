@@ -1,5 +1,6 @@
 package edu.cs305.paintproject.p2pserver;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import edu.cs305.paintproject.Constants;
+import edu.cs305.paintproject.ImageBackup;
 import edu.cs305.paintproject.PictureRequest;
 import edu.cs305.paintproject.util.Logger;
 
@@ -56,6 +58,23 @@ public class P2PServer {
 	}
 	
 	public synchronized void addToSession(String address, String fileName, WorkerThread worker, boolean updateOthers){
+		if(!sessions.containsKey(fileName) || sessions.get(fileName).size() == 0){
+			try{
+				File imgFile = new File("Server/Pictures/" + fileName);
+				ImageIcon image = null;
+				if(!imgFile.exists()){
+					updateOthers = true;
+					ImageIO.write(new BufferedImage(400,400, BufferedImage.TYPE_3BYTE_BGR), "png", imgFile);
+				}
+				image = new ImageIcon(ImageIO.read(imgFile));
+				
+				worker.send(image);
+			}
+			catch(IOException ioe){
+				Logger.log(ioe, "IOException sending image");
+			}
+		}
+		
 		if(!sessions.containsKey(fileName)){
 			ArrayList<String> addresses = new ArrayList<String>();
 			sessions.put(fileName, addresses);
@@ -150,7 +169,7 @@ class WorkerThread extends Thread {
 					Logger.log("Picutre Requested");
 					
 					String fileName = ((PictureRequest)data).pictureName;
-					File imgFile = new File("Server/Pictures/" + fileName);
+					/*File imgFile = new File("Server/Pictures/" + fileName);
 					ImageIcon image = null;
 					if(!imgFile.exists()){
 						updateOthers = true;
@@ -158,12 +177,26 @@ class WorkerThread extends Thread {
 					}
 					image = new ImageIcon(ImageIO.read(imgFile));
 					
-					//if(sessions.get(fileName))
-						send(image);
+					send(image);*/
 					
 					send((new Date()).getTime());
 					server.addToSession(peerSocket.getInetAddress().getHostAddress(), fileName, this, updateOthers);
 					break;
+				}
+				else if(data instanceof ImageBackup){
+					ImageBackup backup = (ImageBackup)data;
+					
+					File imgFile = new File("Server/Pictures/" + backup.fileName);
+					try{
+						BufferedImage image = new BufferedImage(400,400, BufferedImage.TYPE_3BYTE_BGR);
+						Graphics g = image.getGraphics();
+						g.drawImage(backup.image.getImage(), 0, 0, null);
+						
+						ImageIO.write(image, "png", imgFile);
+					}
+					catch(IOException ioe){
+						Logger.log(ioe, "IOException while saving backup image");
+					}
 				}
 				else if(data instanceof Integer){
 					int message = (Integer)data;

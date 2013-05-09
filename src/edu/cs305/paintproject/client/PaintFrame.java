@@ -27,9 +27,9 @@ public class PaintFrame extends JFrame {
 	String host;
 	int port;
 	
-	StartPanel start;
-	PaintApplet applet;
-	SidePanel side;
+	public StartPanel start;
+	public PaintApplet applet;
+	public SidePanel side;
 	
 	public Thread clt;
 	public P2PListener p2pListener;

@@ -22,7 +22,8 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 	int prevMouseX = -1;
 	int prevMouseY = -1;
 	
-	BufferedImage image;
+	String fileName;
+	public BufferedImage image;
 	Graphics graphics;
 	
 	ObjectOutputStream out;
@@ -43,6 +44,14 @@ public class PaintApplet extends JPanel implements MouseListener, MouseMotionLis
 		graphics.setColor(Color.black);
 		
 		this.frame = frame;
+	}
+	
+	public synchronized void setFileName(String fileName){
+		this.fileName = fileName;
+	}
+	
+	public synchronized String getFileName(){
+		return fileName;
 	}
 	
 	public void displayImage(ImageIcon i){
