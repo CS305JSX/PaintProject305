@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -38,7 +39,7 @@ public class PaintFrame extends JFrame {
 		this.host = host;
 		this.port = port;
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
-		
+				
 		try{
 			centralServerSocket = new Socket(host, port);
 		}		
@@ -83,6 +84,13 @@ public class PaintFrame extends JFrame {
 		
 		setVisible(true);
 		setSize(500, 500);
+
+		try{
+			this.setIconImage(ImageIO.read(this.getClass().getResource("img/bucket.png")));
+		}catch(Exception e)
+		{
+			//never mind then.
+		}
 	}
 	
 	public void displayApplet(ImageIcon i){

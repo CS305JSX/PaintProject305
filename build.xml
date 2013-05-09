@@ -3,12 +3,19 @@
 <project name="PaintProj" default="compile">
   <description>PaintProj</description>
   
-  <target name = "run-client" depends = "compile">
+  <target name = "run-client-centralized" depends = "compile">
 	<java jar="jar/client.jar" fork='true'>
-		<arg line="localhost 12356" />
+		<arg line="localhost 12356 100" />
 	</java>
   </target>
   
+  <target name = "run-client-p2p" depends = "compile">
+	<java jar="jar/client.jar" fork='true'>
+		<arg line="localhost 12356 101" />
+	</java>
+  </target>
+
+
   <target name = "run-server" depends = "compile">
 	<java jar="jar/server.jar" fork='true'>
 		<arg line="12356" />
